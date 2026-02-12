@@ -1,0 +1,59 @@
+/* pages/detail/detail.wxss */
+.container-detail {
+  padding-bottom: 50rpx;
+}
+
+.image-wrapper {
+  width: 100%;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400rpx;
+}
+
+.detail-img {
+  width: 100%;
+  display: block;
+}
+
+.info-section {
+  padding: 30rpx;
+  background: #fff;
+  margin-bottom: 40rpx;
+}
+
+.info-row {
+  margin-bottom: 20rpx;
+}
+
+.note-row {
+  margin-top: 30rpx;
+  border-top: 1rpx solid #eee;
+  padding-top: 20rpx;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #888;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.value {
+  font-size: 32rpx;
+  color: #333;
+  line-height: 1.6;
+}
+
+.note-text {
+  white-space: pre-wrap;
+}
+
+.action-section {
+  padding: 0 30rpx;
+}
+
+.delete-btn {
+  width: 100% !important;
+}

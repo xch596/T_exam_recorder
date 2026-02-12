@@ -1,0 +1,22 @@
+<!--pages/detail/detail.wxml-->
+<view class="container-detail">
+  <view class="image-wrapper" bindtap="previewImage">
+    <image class="detail-img" src="{{record.imagePath}}" mode="widthFix"></image>
+  </view>
+
+  <view class="info-section">
+    <view class="info-row">
+      <text class="label">记录时间：</text>
+      <text class="value">{{record.date}}</text>
+    </view>
+    
+    <view class="info-row note-row">
+      <text class="label">备注内容：</text>
+      <text class="value note-text">{{record.note || '暂无备注'}}</text>
+    </view>
+  </view>
+
+  <view class="action-section">
+    <button class="delete-btn" type="warn" bindtap="deleteRecord">删除记录</button>
+  </view>
+</view>

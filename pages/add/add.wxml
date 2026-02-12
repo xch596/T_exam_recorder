@@ -1,0 +1,27 @@
+<!--pages/add/add.wxml-->
+<view class="container-add">
+  <view class="image-section" bindtap="chooseImage">
+    <block wx:if="{{imagePath}}">
+      <image class="preview-img" src="{{imagePath}}" mode="aspectFit"></image>
+      <view class="re-choose-tip">点击图片重新选择</view>
+    </block>
+    <block wx:else>
+      <view class="placeholder">
+        <text class="camera-icon">📷</text>
+        <text>点击拍摄/选择试题图片</text>
+      </view>
+    </block>
+  </view>
+
+  <view class="form-section">
+    <text class="label">备注/题目描述：</text>
+    <textarea 
+      class="note-input" 
+      placeholder="请输入关于这道题的备注..." 
+      bindinput="onInputNote"
+      value="{{note}}"
+    ></textarea>
+  </view>
+
+  <button class="save-btn" bindtap="saveRecord" disabled="{{!imagePath}}">保存记录</button>
+</view>

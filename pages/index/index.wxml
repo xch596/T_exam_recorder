@@ -1,0 +1,25 @@
+<!--pages/index/index.wxml-->
+<view class="container-home">
+  <view class="header">
+    <text class="title">我的错题本</text>
+  </view>
+
+  <view class="record-list">
+    <block wx:if="{{records.length > 0}}">
+      <view class="record-item" wx:for="{{records}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+        <image class="record-img" src="{{item.imagePath}}" mode="aspectFill"></image>
+        <view class="record-info">
+          <text class="record-date">{{item.date}}</text>
+          <text class="record-note">{{item.note || '无备注'}}</text>
+        </view>
+      </view>
+    </block>
+    <view wx:else class="empty-state">
+      <text>暂无错题记录，快去添加吧！</text>
+    </view>
+  </view>
+
+  <view class="fab-btn" bindtap="goToAdd">
+    <text class="plus-icon">+</text>
+  </view>
+</view>
