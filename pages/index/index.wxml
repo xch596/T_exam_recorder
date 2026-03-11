@@ -1,25 +1,105 @@
 <!--pages/index/index.wxml-->
 <view class="container-home">
-  <view class="header">
-    <text class="title">我的错题本</text>
+  <!-- 顶部筛选栏 -->
+  <view class="filter-bar">
+    <picker class="filter-item" bindchange="onSubjectChange" value="{{subjectIndex}}" range="{{subjects}}">
+      <view class="picker-text {{subjectIndex > 0 ? 'active' : ''}}">
+        {{subjects[subjectIndex]}} <text class="arrow">▼</text>
+      </view>
+    </picker>
+    <picker class="filter-item" bindchange="onGradeChange" value="{{gradeIndex}}" range="{{grades}}">
+      <view class="picker-text {{gradeIndex > 0 ? 'active' : ''}}">
+        {{grades[gradeIndex]}} <text class="arrow">▼</text>
+      </view>
+    </picker>
+    <picker class="filter-item" bindchange="onSemesterChange" value="{{semesterIndex}}" range="{{semesters}}">
+      <view class="picker-text {{semesterIndex > 0 ? 'active' : ''}}">
+        {{semesters[semesterIndex]}} <text class="arrow">▼</text>
+      </view>
+    </picker>
   </view>
 
-  <view class="record-list">
-    <block wx:if="{{records.length > 0}}">
-      <view class="record-item" wx:for="{{records}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
-        <image class="record-img" src="{{item.imagePath}}" mode="aspectFill"></image>
-        <view class="record-info">
-          <text class="record-date">{{item.date}}</text>
-          <text class="record-note">{{item.note || '无备注'}}</text>
+  <!-- 内容列表 -->
+  <scroll-view scroll-y class="content-scroll">
+    <block wx:if="{{groupedRecords.length > 0}}">
+      <view class="group-card" wx:for="{{groupedRecords}}" wx:key="id" wx:for-index="groupIndex">
+        <!-- 分组标题 -->
+        <view class="group-header" bindtap="toggleGroup" data-index="{{groupIndex}}">
+          <view class="group-title-box">
+            <text class="folder-icon">📂</text>
+            <text class="group-name">{{item.name}}</text>
+            <text class="group-count">({{item.items.length}}题)</text>
+          </view>
+          <view class="group-actions">
+            <button class="paper-btn" size="mini" catchtap="onPaperBtn" data-index="{{groupIndex}}" disabled="{{item.items.length===0}}">
+              {{paperSelectGroupIndex===groupIndex ? ('生成(' + paperSelectedCount + ')') : '生成错题卷'}}
+            </button>
+            <text class="arrow-icon {{expandedGroups[groupIndex] ? 'rotate' : ''}}">▶</text>
+          </view>
+        </view>
+
+        <!-- 分组内容（展开时显示） -->
+        <view class="group-content" wx:if="{{expandedGroups[groupIndex]}}">
+          <view class="paper-select-bar" wx:if="{{paperSelectGroupIndex===groupIndex}}">
+            <text class="paper-select-text">已选 {{paperSelectedCount}} 题</text>
+            <button class="paper-cancel-btn" size="mini" catchtap="cancelPaperSelect">取消</button>
+          </view>
+          <view class="record-item" wx:for="{{item.items}}" wx:key="id" wx:for-item="record" bindtap="goToDetail" data-id="{{record.id}}">
+            <view class="select-box" wx:if="{{paperSelectGroupIndex===groupIndex}}" catchtap="togglePaperItem" data-id="{{record.id}}" data-group-index="{{groupIndex}}">
+              <view class="select-dot {{paperSelectedMap[record.id] ? 'checked' : ''}}"></view>
+            </view>
+            <image class="record-img" src="{{record.cleanedImagePath || record.imagePath}}" mode="aspectFill"></image>
+            <view class="record-info">
+              <view class="tags-row">
+                <text class="tag">{{record.subject}}</text>
+                <text class="tag">{{record.grade}}</text>
+              </view>
+              <text class="record-note">{{record.note || '无备注'}}</text>
+              <text class="record-date">{{record.date}}</text>
+            </view>
+          </view>
         </view>
       </view>
     </block>
-    <view wx:else class="empty-state">
-      <text>暂无错题记录，快去添加吧！</text>
-    </view>
-  </view>
 
+    <view class="group-card" wx:if="{{filteredPaperRecords.length > 0}}">
+      <view class="group-header">
+        <view class="group-title-box">
+          <text class="folder-icon">🧾</text>
+          <text class="group-name">错题卷</text>
+          <text class="group-count">({{filteredPaperRecords.length}}份)</text>
+        </view>
+      </view>
+      <view class="group-content">
+        <view class="record-item" wx:for="{{filteredPaperRecords}}" wx:key="id" wx:for-item="record" bindtap="goToDetail" data-id="{{record.id}}">
+          <image class="record-img" src="{{record.imagePath}}" mode="aspectFill"></image>
+          <view class="record-info">
+            <view class="tags-row">
+              <text class="tag">{{record.subject}}</text>
+              <text class="tag">{{record.grade}}</text>
+            </view>
+            <text class="record-note">{{record.note || '错题卷'}}</text>
+            <text class="record-date">{{record.date}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 空状态 -->
+    <view wx:if="{{groupedRecords.length === 0 && filteredPaperRecords.length === 0}}" class="empty-state">
+      <image class="empty-img" src="https://img.icons8.com/ios/100/cccccc/empty-box.png" mode="aspectFit"></image>
+      <text>暂无符合条件的错题记录</text>
+      <text class="sub-text">快去点击右下角添加吧</text>
+    </view>
+
+    <!-- 底部占位，防止FAB遮挡 -->
+    <view style="height: 150rpx;"></view>
+  </scroll-view>
+
+  <!-- 悬浮添加按钮 -->
   <view class="fab-btn" bindtap="goToAdd">
     <text class="plus-icon">+</text>
   </view>
 </view>
+
+<canvas canvas-id="paperCanvas" class="paper-canvas" style="width:{{paperCanvasW}}px;height:{{paperCanvasH}}px;" width="{{paperCanvasW}}" height="{{paperCanvasH}}"></canvas>

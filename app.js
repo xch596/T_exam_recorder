@@ -7,6 +7,8 @@ App({
     wx.setStorageSync('logs', logs)
   },
   globalData: {
-    userInfo: null
+    userInfo: null,
+    serverBaseUrl: 'http://192.168.31.247:8001',
+    serverRemoveHandwritingPath: '/remove-handwriting'
   }
 })

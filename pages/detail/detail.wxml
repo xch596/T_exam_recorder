@@ -1,8 +1,23 @@
 <!--pages/detail/detail.wxml-->
-<view class="container-detail">
-  <view class="image-wrapper" bindtap="previewImage">
-    <image class="detail-img" src="{{record.imagePath}}" mode="widthFix"></image>
-  </view>
+<view class="container-detail" wx:if="{{record}}">
+  <block wx:if="{{isPaper}}">
+    <view class="img-title">错题卷</view>
+    <view class="image-wrapper" wx:for="{{paperPages}}" wx:key="idx" wx:for-item="p" wx:for-index="idx" bindtap="previewPaper" data-index="{{idx}}">
+      <image class="detail-img" src="{{paperSrcMap[idx] || p}}" mode="widthFix" binderror="onPaperImageError" data-index="{{idx}}" data-path="{{p}}"></image>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="img-title">原题</view>
+    <view class="image-wrapper" bindtap="previewOriginal">
+      <image class="detail-img" src="{{originalSrc}}" mode="widthFix" binderror="onImageError" data-kind="original"></image>
+    </view>
+
+    <view class="img-title" wx:if="{{cleanedSrc}}">去笔迹</view>
+    <view class="image-wrapper" wx:if="{{cleanedSrc}}" bindtap="previewCleaned">
+      <image class="detail-img" src="{{cleanedSrc}}" mode="widthFix" binderror="onImageError" data-kind="cleaned"></image>
+    </view>
+  </block>
 
   <view class="info-section">
     <view class="info-row">
@@ -19,4 +34,8 @@
   <view class="action-section">
     <button class="delete-btn" type="warn" bindtap="deleteRecord">删除记录</button>
   </view>
+</view>
+
+<view class="container-detail" wx:else>
+  <text>加载中...</text>
 </view>
